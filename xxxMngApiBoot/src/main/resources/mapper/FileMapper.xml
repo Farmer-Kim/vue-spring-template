@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xxx.mgt.gm.common.file.FileMapper">
+	
+	<select id="getFileDetail" parameterType="xxx.mgt.gm.common.file.FileVO" resultType="hashMap">
+		/*  getFileDetail :  파일 정보 조회  */
+		SELECT  
+		  ATACH_ID,
+		  ATACH_SEQ,
+		  FILE_NAME,
+		  FILE_STORE_NAME,
+		  FILE_STORE_PATH,
+		  FILE_ETSION_EXPT_NAME,
+		  ETSION_NAME,
+		  FILE_SIZE
+		FROM file_test
+		WHERE ATACH_ID = #{atachId}
+		AND ATACH_SEQ = #{atachSeq}
+    </select>
+    
+	<!-- 파일 ATACH_SEQ 최대값 조회  -->
+	<select id="getMaxAtachSeq" parameterType="String" resultType="Integer">
+		/* getMaxAtachSeq: 파일 ATACH_SEQ 최대값 조회  */
+		SELECT 
+		  COALESCE(MAX(CAST(ATACH_SEQ AS INT)), '0')
+		FROM file_test
+		WHERE ATACH_ID = #{atach_id}
+    </select>
+    
+	<!-- 파일 정보 등록  --> 
+	<insert id="insertFileInfo" parameterType="xxx.mgt.gm.common.file.FileVO">
+		INSERT INTO file_test  /* AS-IS - INSERT_ATACH_LIST, 내용 - 파일 정보 등록  */
+		(
+		  ATACH_ID,
+		  ATACH_SEQ,
+		  FILE_NAME,
+		  FILE_STORE_NAME,
+		  FILE_STORE_PATH,
+		  FILE_ETSION_EXPT_NAME,
+		  ETSION_NAME,
+		  FILE_SIZE
+		)
+		VALUES
+		(
+		  #{atach_id},
+		  #{atach_seq},
+		  #{file_name},
+		  #{file_store_name},
+		  #{file_store_path},
+		  #{file_etsion_expt_name},
+		  #{etsion_name},
+		  #{file_size}
+		) 
+    </insert>
+	<!-- 파일 ATACH_ID 정보 변경 -->
+	<update id="updateFileDetailAtachId" parameterType="xxx.mgt.gm.common.file.FileVO">
+		/* updateFileDetailAtachId :  파일 ATACH_ID 정보 변경  */
+		UPDATE file_test SET	
+			ATACH_ID = #{new_atach_id}
+		WHERE ATACH_ID = #{atach_id}
+    </update>
+	<!--  파일 정보 삭제 -->
+	<delete id="deleteFileDetail" parameterType="xxx.mgt.gm.common.file.FileVO">
+		/* deleteFileDetail: 파일 정보 삭제  */
+		delete from file_test  
+		where atach_id = #{atach_id}
+		and atach_seq = #{atach_seq}
+    </delete>
+    
+    <!-- 첨부파일 원장 등록 --> 
+    <select id="getAtachIdSeq" resultType="String">
+    	 /* getAtachIdSeq :  첨부파일 원장 등록  */
+    	select TO_CHAR(NOW(), 'YYYYMMDD')||LPAD(SEQ_ATTACH_ID.NEXTVAL, 8, '0') AS ATACHID
+    </select>
+    
+    <!-- 파일정보 목록 -->
+	<select id="fileInfoList" parameterType="xxx.mgt.gm.common.file.FileVO" resultType="xxx.mgt.gm.common.file.FileVO">
+		 /* fileInfoList :  파일정보 목록 */
+		select * from file_test
+		where atach_id = #{atachId}
+	</select>
+	
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xxx.mgt.gm.api.user.mapper.UserMapper">
+
+	<!-- 입력한 로그인 아이디가 user table에 있는지 확인 -->
+	<select id="getUserById" resultType="xxx.mgt.gm.api.user.vo.CostomUserDetails">
+	/* getUserById : 회원 로그인 */
+	select *
+	from user
+	where 1 = 1
+	AND
+	<if test=' username neq null and username neq "" '>
+	username = #{username}
+	</if>
+	</select>
+	
+	<!-- 아이디 찾기 sql문 -->
+	<select id="checkIdAndEmail" parameterType="xxx.mgt.gm.api.user.dto.SearchUserInfoDto" resultType="_int">
+	/* checkIdAndEmail : 입력한 아이디와 비밀번호가 일치하는지 비교*/
+	select COUNT(*)
+	from user
+	where 1 = 1
+		<if test=' nickname neq null and nickname neq ""'>
+	AND nickname = #{nickname}
+		</if>
+		<if test=' userEmail neq null and userEmail neq ""'>
+	AND userEmail = #{userEmail}
+		</if>
+	</select>
+	
+	<!-- 회원 이메일로 아이디를 받아오는 sql문 -->
+	<select id="getUserIdByEmail" parameterType="xxx.mgt.gm.api.user.dto.SearchUserInfoDto" resultType="String">
+	/* getUserIdByEmail : 회원 아이디 반환*/
+	select username
+	from user
+	where 1 = 1
+	<if test=' userEmail neq null and userEmail neq ""'>
+	AND userEmail = #{userEmail}
+	</if>
+	</select>
+	
+	<!-- 회원 이메일과 닉네임으로 회원 비밀번호를 변경 -->
+	<update id="changeTempPassword" parameterType="xxx.mgt.gm.api.user.dto.SearchUserInfoDto">
+	/* changeTempPassword : 회원 비밀번호 변경 */
+	update user
+	set password = #{tempPassword}
+	where 1 = 1
+	<if test=' nickname neq null and nickname neq ""'>
+	AND nickname = #{nickname}
+		</if>
+		<if test=' userEmail neq null and userEmail neq ""'>
+	AND userEmail = #{userEmail}
+		</if>
+	</update>
+
+
+</mapper>

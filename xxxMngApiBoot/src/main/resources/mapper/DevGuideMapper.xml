@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xxx.mgt.gm.api.support.mapper.DevGuideMapper">
+
+	<!--  개발자 가이드 목록 조회 -->
+	<select id="devGuideList" parameterType="xxx.mgt.gm.api.support.vo.DevGuideVO" resultType="xxx.mgt.gm.api.support.vo.DevGuideVO">
+		/* devGuideList : 개발자 가이드 목록 조회 */
+		select *
+		from tb_com_devlop_guide
+		where 1=1
+		<if test=' devlopGuideSj neq null and devlopGuideSj neq "" '>
+			and DEVLOP_GUIDE_SJ like CONCAT('%', #{srchWord}, '%')
+		</if>
+		order by DEVLOP_GUIDE_SN desc
+		LIMIT #{pageStart}, #{perPageNum}
+	</select>
+	
+	<!--  개발자 가이드 목록 조회 카운트-->
+	<select id="devGuideListCnt" parameterType="xxx.mgt.gm.api.support.vo.DevGuideVO" resultType="Integer">
+		/* devGuideListCnt : 개발자 가이드 목록 조회 카운트 */
+		select count(1)
+		from tb_com_devlop_guide
+		where 1=1
+		<if test=' devlopGuideSj neq null and devlopGuideSj neq "" '>
+			and DEVLOP_GUIDE_SJ like CONCAT('%', #{srchWord}, '%')
+		</if>
+	</select>
+	
+	
+	<!--  개발자 가이드 상세 조회 -->
+	<select id="devGuideView" parameterType="xxx.mgt.gm.api.support.vo.DevGuideVO" resultType="xxx.mgt.gm.api.support.vo.DevGuideVO">
+		/* devGuideView : 개발자 가이드 상세 조회 */
+		select 
+		  DEVLOP_GUIDE_SJ
+		, DEVLOP_GUIDE_CN
+		, DEVLOP_GUIDE_VER_VALUE
+		, DATE_FORMAT(CREAT_DT, '%Y-%m-%d') AS CREAT_DT
+		, CRTR_SN
+		, (select DEVLOP_GUIDE_SN from tb_com_devlop_guide where DEVLOP_GUIDE_SN <![CDATA[ < ]]> #{devlopGuideSn} 
+		 	order by DEVLOP_GUIDE_SN desc limit 1) as BEFORE_DEV_GUIDE_SN
+		, (select DEVLOP_GUIDE_SJ from tb_com_devlop_guide where DEVLOP_GUIDE_SN  <![CDATA[ < ]]>  #{devlopGuideSn} 
+		 	order by DEVLOP_GUIDE_SN desc limit 1) as BEFORE_DEV_GUIDE_SJ
+		, (select DEVLOP_GUIDE_SN FROM tb_com_devlop_guide where DEVLOP_GUIDE_SN  <![CDATA[ > ]]>  #{devlopGuideSn} 
+		    order by DEVLOP_GUIDE_SN limit 1) AS NEXT_DEV_GUIDE_SN
+		, (select DEVLOP_GUIDE_SJ FROM tb_com_devlop_guide where DEVLOP_GUIDE_SN  <![CDATA[ > ]]>  #{devlopGuideSn} 
+		    order by DEVLOP_GUIDE_SN limit 1) AS NEXT_DEV_GUIDE_SJ
+		from tb_com_devlop_guide
+		where 1=1 
+		and DEVLOP_GUIDE_SN like #{devlopGuideSn}
+	</select>
+	
+	<!--  개발자 가이드 최신 순번 -->
+	<select id="getMaxDevlopGuideSn" resultType="int">
+		/* getMaxDevlopGuideSn : 개발자 가이드 최신 순번 */
+		select Max(DEVLOP_GUIDE_SN)
+		from tb_com_devlop_guide
+	</select>
+	
+	<!--  개발자 가이드 등록 -->
+	<insert id="devGuideInsert" parameterType="xxx.mgt.gm.api.support.vo.DevGuideVO">
+		/* devGuideInsert : 개발자 가이드 등록 */
+		insert into tb_com_devlop_guide
+		(
+			  DEVLOP_GUIDE_SJ
+			, DEVLOP_GUIDE_CN
+			, DEVLOP_GUIDE_VER_VALUE
+			, FILE_SN
+			, DATE_FORMAT(CREAT_DT, '%Y-%m-%d') AS CREAT_DT
+			, CRTR_SN
+			, UPDT_DT
+			, UPDUSR_SN
+		)
+		VALUES
+		(
+			  #{devlopGuideSj}
+			, #{devlopGuideCn}
+			, #{devlopGuideVerValue}
+			, null
+		    , NOW()
+            , #{crtrSn}
+            , NOW()
+            , #{updusrSn}
+		)
+	</insert>
+	
+	<!--  -->
+	<update id="devGuideUpdate" parameterType="xxx.mgt.gm.api.support.vo.DevGuideVO">
+	update tb_com_devlop_guide set
+		 DEVLOP_GUIDE_SJ = #{devlopGuideSj}
+		, DEVLOP_GUIDE_CN = #{devlopGuideCn}
+		, DEVLOP_GUIDE_VER_VALUE = #{devlopGuideVerValue}
+		, UPDT_DT = NOW()
+		, UPDUSR_SN = #{updusrSn}
+	where 1 = 1
+		and DEVLOP_GUIDE_SN like #{devlopGuideSn}
+	
+	</update>
+	<!--  개발자 가이드 삭제 -->
+	<delete id="devGuideDel" parameterType="xxx.mgt.gm.api.support.vo.DevGuideVO">
+		/* devGuideDel : 개발자 가이드 삭제 */
+		delete from tb_com_devlop_guide
+		where 1=1 
+		and DEVLOP_GUIDE_SN like #{devlopGuideSn}
+	</delete>
+</mapper>

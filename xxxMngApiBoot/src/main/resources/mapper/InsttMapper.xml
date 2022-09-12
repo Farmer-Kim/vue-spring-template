@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="xxx.mgt.gm.api.manage.mapper.InsttMapper">
+	<!-- 기관관리 리스트 조회 -->
+	<select id="insttManageList" parameterType="xxx.mgt.gm.api.manage.vo.InsttVO" resultMap="InsttVO_MAP">
+		SELECT
+		A.INSTT_SN
+		, A.INSTT_NM
+		, A.INSTT_TY_CODE
+		, A.REPRSNT_TELNO
+		, A.INSTT_ADRES
+		, DATE_FORMAT(A.CREAT_DT, '%Y-%m-%d') AS CREAT_DT
+		, COALESCE(B.USER_NM, '-') AS USER_NM
+		FROM TB_COM_INSTT A
+		LEFT OUTER JOIN TB_USER B
+		ON A.instt_sn = B.PSITN_INSTT_SN
+		WHERE 1 = 1
+		<if test="srchType neq null and srchType neq '' and srchWord neq null and srchWord neq ''">
+			<choose>
+				<when test="srchType eq '1'.toString()">
+					AND A.INSTT_NM LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<when test="srchType eq '2'.toString()">
+					AND A.INSTT_TY_CODE LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<when test="srchType eq '3'.toString()">
+					AND A.REPRSNT_TELNO LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<when test="srchType eq '4'.toString()">
+					AND A.INSTT_ADRES LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<otherwise>
+					AND 1 = 1
+				</otherwise>
+			</choose>
+		</if>
+		ORDER BY A.instt_sn DESC
+		<if test=' pageStart neq null and perPageNum neq null '>
+			LIMIT #{pageStart}, #{perPageNum}
+		</if>	
+	</select>
+	<!-- 공지사항 리스트 검색 갯수 조회 -->
+	<select id="insttManageListCnt" parameterType="xxx.mgt.gm.api.manage.vo.InsttVO" resultType="INTEGER">
+		/*공지사항 리스트 검색 갯수 조회*/
+		SELECT
+		COUNT(*) AS COUNT
+		FROM TB_COM_INSTT A
+		WHERE 1 = 1
+		<if test="srchType neq null and srchType neq '' and srchWord neq null and srchWord neq ''">
+			<choose>
+				<when test="srchType eq '1'.toString()">
+					AND A.INSTT_NM LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<when test="srchType eq '2'.toString()">
+					AND A.INSTT_TY_CODE LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<when test="srchType eq '3'.toString()">
+					AND A.REPRSNT_TELNO LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<when test="srchType eq '4'.toString()">
+					AND A.INSTT_ADRES LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<otherwise>
+					AND 1 = 1
+				</otherwise>
+			</choose>
+		</if>
+	</select>
+	<!-- 공지사항 등록 -->
+	<insert id="insttInsert" parameterType="xxx.mgt.gm.api.manage.vo.InsttVO">
+		/*공지사항 등록*/
+		<![CDATA[
+		INSERT INTO TB_COM_INSTT (
+			 INSTT_NM
+			, INSTT_TY_CODE
+			, REPRSNT_TELNO
+			, INSTT_ZIP
+			, INSTT_ADRES
+			, INSTT_DETAIL_ADRES
+			, CREAT_DT
+			, CRTR_SN
+			, UPDT_DT
+			, UPDUSR_SN
+		) VALUES (
+			  #{insttNm}
+			, #{insttTyCode}
+			, #{reprsntTelno}
+			, #{insttZip}
+			, #{insttAdres}
+			, #{insttDetailAdres}
+			, NOW()
+			, #{crtrSn}
+			, NOW()
+			, #{updusrSn}
+		)
+		]]>
+		<selectKey keyProperty="insttSn" resultType="INTEGER" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<resultMap type="xxx.mgt.gm.api.manage.vo.InsttVO" id="InsttVO_MAP">
+		<result property="insttSn" column="INSTT_SN"/>
+		<result property="insttNm" column="INSTT_NM"/>
+		<result property="insttTyCode" column="INSTT_TY_CODE"/>
+		<result property="reprsntTelno" column="REPRSNT_TELNO"/>
+		<result property="insttZip" column="INSTT_ZIP"/>
+		<result property="insttAdres" column="INSTT_ADRES"/>
+		<result property="insttDetailAdres" column="INSTT_DETAIL_ADRES"/>
+		<result property="creatDt" column="CREAT_DT"/>
+		<result property="crtrSn" column="CRTR_SN"/>
+		<result property="updtDt" column="UPDT_DT"/>
+		<result property="updusrSn" column="UPDUSR_SN"/>
+	</resultMap>
+</mapper>	

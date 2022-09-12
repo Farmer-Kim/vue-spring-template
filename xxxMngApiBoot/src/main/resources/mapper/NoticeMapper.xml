@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="xxx.mgt.gm.api.notice.mapper.NoticeMapper">
+	
+	<!-- 공지사항 리스트 조회 -->
+	<select id="noticeList" parameterType="xxx.mgt.gm.api.notice.vo.NoticeVO" resultMap="NoticeVO_MAP">
+		/*공지사항 리스트 조회*/
+		SELECT
+			  A.NOTICE_SN
+			, A.NOTICE_SJ
+			, A.NOTICE_CN
+			, A.FILE_SN
+			, A.NOTICE_RDCNT
+			, DATE_FORMAT(A.CREAT_DT, '%Y-%m-%d') AS CREAT_DT
+			, A.CRTR_SN
+			, A.UPDT_DT
+			, A.UPDUSR_SN
+			, COALESCE(B.USER_NM, '-') AS USER_NM
+			, C.FILE_NM
+		 FROM TB_COM_NOTICE A
+		 	  	LEFT OUTER JOIN TB_USER B 
+		 	  ON A.CRTR_SN = B.USER_SN
+		 	  	LEFT OUTER JOIN TB_COM_FILE_DTL C
+		 	  ON A.FILE_SN = C.FILE_SN
+		WHERE 1 = 1
+		<if test="srchType neq null and srchType neq '' and srchWord neq null and srchWord neq ''">
+			<choose>
+				<when test="srchType eq '1'.toString()">
+		  AND A.NOTICE_SJ LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<when test="srchType eq '2'.toString()">
+		  AND A.NOTICE_CN LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<otherwise>
+		  AND 1 = 1
+				</otherwise>
+			</choose>
+		</if>
+	 ORDER BY A.NOTICE_SN DESC
+	 	<if test=' pageStart neq null and perPageNum neq null '>
+			LIMIT #{pageStart}, #{perPageNum}
+		</if>	
+	</select>
+	
+	<!-- 공지사항 리스트 검색 갯수 조회 -->
+	<select id="noticeListCnt" parameterType="xxx.mgt.gm.api.notice.vo.NoticeVO" resultType="INTEGER">
+		/*공지사항 리스트 검색 갯수 조회*/
+		SELECT
+			  COUNT(*) AS COUNT
+		 FROM TB_COM_NOTICE A
+		WHERE 1 = 1
+		<if test="srchType neq null and srchType neq '' and srchWord neq null and srchWord neq ''">
+			<choose>
+				<when test="srchType eq '1'.toString()">
+		  AND A.NOTICE_SJ LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<when test="srchType eq '2'.toString()">
+		  AND A.NOTICE_CN LIKE CONCAT('%', #{srchWord}, '%')
+				</when>
+				<otherwise>
+		  AND 1 = 1
+				</otherwise>
+			</choose>
+		</if>
+	</select>
+	
+	<!-- 공지사항 뷰 조회 -->
+	<select id="noticeView" parameterType="xxx.mgt.gm.api.notice.vo.NoticeVO" resultMap="NoticeVO_MAP">
+		/*공지사항 뷰 조회*/
+		SELECT 
+			  X.*
+		 FROM (
+			SELECT
+				  A.NOTICE_SN
+				, A.NOTICE_SJ
+				, A.NOTICE_CN
+				, A.FILE_SN
+				, A.NOTICE_RDCNT
+				, DATE_FORMAT(A.CREAT_DT, '%Y-%m-%d') AS CREAT_DT
+				, A.CRTR_SN
+				, A.UPDT_DT
+				, A.UPDUSR_SN
+				, COALESCE(B.USER_NM, '-') AS USER_NM
+				, C.FILE_NM
+				, COALESCE(LAG(A.NOTICE_SN) OVER(ORDER BY A.NOTICE_SN), -1) AS BEFORE_NOTICE_SN
+				, LAG(A.NOTICE_SJ) OVER(ORDER BY A.NOTICE_SN) AS BEFORE_NOTICE_SJ
+				, COALESCE(LEAD(A.NOTICE_SN) OVER(ORDER BY A.NOTICE_SN), -1) AS NEXT_NOTICE_SN
+				, LEAD(A.NOTICE_SJ) OVER(ORDER BY A.NOTICE_SN) AS NEXT_NOTICE_SJ
+			 FROM TB_COM_NOTICE A
+			 	  	LEFT OUTER JOIN TB_USER B 
+			 	  ON A.CRTR_SN = B.USER_SN
+			 	  	LEFT OUTER JOIN TB_COM_FILE_DTL C
+			 	  ON A.FILE_SN = C.FILE_SN ) X
+		WHERE 1 = 1
+		<if test="noticeSn neq null and noticeSn neq ''">
+		  AND X.NOTICE_SN = CAST(#{noticeSn} AS UNSIGNED)
+		</if>
+	</select>
+	
+	<!-- 공지사항 조회수 증가 -->
+	<update id="noticeCntUp" parameterType="xxx.mgt.gm.api.notice.vo.NoticeVO">
+		/*공지사항 조회수 증가*/
+		UPDATE  TB_COM_NOTICE 
+			SET NOTICE_RDCNT = ( SELECT NOTICE_RDCNT + 1 AS NOTICE_RDCNT FROM TB_COM_NOTICE WHERE NOTICE_SN = CAST(#{noticeSn} AS UNSIGNED) )
+		  WHERE NOTICE_SN = CAST(#{noticeSn} AS UNSIGNED)
+	</update>
+	
+	<!-- 공지사항 등록 -->
+	<insert id="noticeInsert" parameterType="xxx.mgt.gm.api.notice.vo.NoticeVO">
+		/*공지사항 등록*/
+		<![CDATA[
+		INSERT INTO TB_COM_NOTICE (
+			  NOTICE_SJ
+			, NOTICE_CN
+			, FILE_SN
+			, CREAT_DT
+			, CRTR_SN
+			, UPDT_DT
+			, UPDUSR_SN
+		) VALUES (
+			  #{noticeSj}
+			, #{noticeCn}
+			, #{fileSn}
+			, NOW()
+			, #{crtrSn}
+			, NOW()
+			, #{updusrSn}
+		)
+		]]>
+		<selectKey keyProperty="noticeSn" resultType="INTEGER" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<!-- 공지사항 수정 -->
+	<update id="noticeUpdate" parameterType="xxx.mgt.gm.api.notice.vo.NoticeVO">
+		/*공지사항 수정*/
+		UPDATE    TB_COM_NOTICE 
+			SET   NOTICE_SJ     = #{noticeSj}
+				, NOTICE_CN     = #{noticeCn}
+				, FILE_SN       = #{fileSn}
+				, UPDT_DT       = NOW()
+				, UPDUSR_SN     = #{updusrSn}
+		  WHERE   NOTICE_SN = CAST(#{noticeSn} AS UNSIGNED)
+	</update>
+	
+	<!-- 공지사항 삭제 -->
+	<delete id="noticeDelete" parameterType="xxx.mgt.gm.api.notice.vo.NoticeVO">
+		/*공지사항 삭제*/
+		DELETE FROM   TB_COM_NOTICE
+		 		WHERE NOTICE_SN = CAST(#{noticeSn} AS UNSIGNED)
+	</delete>
+	
+	<!-- 공지사항 맵 -->
+	<resultMap type="xxx.mgt.gm.api.notice.vo.NoticeVO" id="NoticeVO_MAP">
+		<result property="noticeSn" column="NOTICE_SN"/>
+		<result property="noticeSj" column="NOTICE_SJ"/>
+		<result property="noticeCn" column="NOTICE_CN"/>
+		<result property="fileSn" column="FILE_SN"/>
+		<result property="noticeRdCnt" column="NOTICE_RDCNT"/>
+		<result property="creatDt" column="CREAT_DT"/>
+		<result property="crtrSn" column="CRTR_SN"/>
+		<result property="updtDt" column="UPDT_DT"/>
+		<result property="updusrSn" column="UPDUSR_SN"/>
+		<result property="userNm" column="USER_NM"/>
+		<result property="fileNm" column="FILE_NM"/>
+		<result property="beforeNoticeSn" column="BEFORE_NOTICE_SN"/>
+		<result property="beforeNoticeSj" column="BEFORE_NOTICE_SJ"/>
+		<result property="nextNoticeSn" column="NEXT_NOTICE_SN"/>
+		<result property="nextNoticeSj" column="NEXT_NOTICE_SJ"/>
+	</resultMap>
+</mapper>

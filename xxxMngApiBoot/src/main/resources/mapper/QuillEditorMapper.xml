@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xxx.mgt.gm.api.lab.mapper.QuillEditorMapper">
+	<!-- Quill Editor Content 조회 -->
+	<select id="getQuillEditorList" parameterType="xxx.mgt.gm.api.lab.vo.QuillEditorVO" resultType="xxx.mgt.gm.api.lab.vo.QuillEditorVO">
+		select id
+		      ,content
+		  from lmg_editor
+		 where 1=1
+	</select>
+	
+	<insert id="regQuillEditorInfo" parameterType="xxx.mgt.gm.api.lab.vo.QuillEditorVO">
+		<![CDATA[
+		INSERT INTO lmg_editor
+		(
+			 id
+			,content
+		)
+		VALUES
+		(
+			 #{id}
+			,#{content}
+		)
+		]]>
+	</insert>
+</mapper>

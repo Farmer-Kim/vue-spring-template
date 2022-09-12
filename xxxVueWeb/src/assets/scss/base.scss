@@ -1,0 +1,282 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap');
+
+
+/* 모바일 패치 (아이패드 글자확대방지) */
+html{-webkit-text-size-adjust:none; min-height:100%;}
+body{
+    font-size:12px; font-family:'Montserrat','Noto Sans KR',sans-serif; color:#333333; letter-spacing:0; text-align:left; letter-spacing:-0.25px;
+    font-weight:400; min-height:100%; overscroll-behavior: contain; overscroll-behavior-y: contain;
+}
+
+/* reset */
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote,
+pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong,
+sub, sup, tt, var,b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody,
+tfoot, thead, tr, th, td,article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,time, mark, audio, video {margin: 0; padding: 0; border: 0;}
+ol, ul, li { list-style:none; padding:0;}
+fieldset, img,button,input[type=submit],input[type=image] { border:0}
+img { line-height:100%; font-size:100%; vertical-align:top}
+blockquote, q {quotes:none}
+blockquote:before, blockquote:after,q:before, q:after {content: ''; content: none;}
+ins {text-decoration:none}
+del {text-decoration:line-through}
+.dotbox {white-space:nowrap; text-overflow:ellipsis; overflow:hidden;}
+.kitbox {
+    display:block; display:-webkit-box !important; -webkit-box-orient:vertical;
+    white-space:normal; overflow:hidden; text-overflow:ellipsis; word-wrap:break-word;
+    -webkit-line-clamp:2;
+    &.line3 {-webkit-line-clamp:3;}
+    &.line4 {-webkit-line-clamp:4;}
+    &.line5 {-webkit-line-clamp:5;}
+    &.line6 {-webkit-line-clamp:6;}
+    &.line7 {-webkit-line-clamp:7;}
+    &.line8 {-webkit-line-clamp:8;}
+    &.line9 {-webkit-line-clamp:9;}
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {display: block;}
+
+/* base */
+table {border-collapse:collapse;}
+td,th {background-clip:padding-box;}
+input,textarea,select,button{
+    font-size:13px;
+    color:#666;
+    font-family:'Montserrat','Noto Sans KR', sans-serif;
+    box-sizing:border-box;
+    vertical-align:middle; cursor:pointer;
+    -moz-appearance: none; -webkit-appearance: none; -ms-appearance: none; appearance: none;
+    border-radius:0; background:none; border:none;
+    &::-ms-clear {display:none;}
+}
+textarea{vertical-align:middle;}
+
+/* anchor */
+a {
+    color:#666;
+    text-decoration:none;
+    font-family:'Montserrat','Noto Sans KR', sans-serif;
+    outline:none;
+    &:link,
+    &:visited {text-decoration:none;}
+    &:hover,
+    &:active,
+    &:focus {text-decoration:none;}
+}
+
+/* 네이티브 외형 감추기 */
+select {
+    -webkit-appearance:none; -moz-appearance:none; appearance:none;
+    &::-ms-expand {display:none;}
+}
+
+/* Chrome/Opera/Safari */
+::-webkit-input-placeholder {color:#b2b2b2;}
+::-moz-placeholder {color:#b2b2b2;}
+:-ms-input-placeholder {color:#b2b2b2;}
+:-moz-placeholder {color:#b2b2b2;}
+
+/* border-none */
+.bd {
+    &-n {border:none !important;}
+    &_tn {border-top:none !important;}
+    &_bn {border-bottom:none !important;}
+    &_ln {border-left:none !important;}
+    &_rn {border-right:none !important;}
+}
+
+/* text-align */
+.t {
+    &_l {text-align:left !important;}
+    &_c {text-align:center !important;}
+    &_r {text-align:right !important;}
+    &_j {text-align:justify !important;}
+}
+
+/* vertical-align */
+.v {
+    &_t {vertical-align:top !important}
+    &_m {vertical-align:middle !important}
+    &_b {vertical-align:bottom !important}
+}
+
+/* width */
+@for $tw from 1 to 200 {
+    .twidth#{$tw} { // true width
+        width : 1px * $tw;
+    }
+    .pwidth#{$tw} { // per width
+        width : 1% * $tw !important;
+    }
+}
+
+/* position */
+.ps {
+    &-ab {position:absolute;}
+    &-re {position:relative;}
+    &-fx {position:fixed;}
+
+    &-cm {position:absolute; top:50%; left:50%; transform: translate(-50%,-50%);}
+    &-wf {left:50%; transform: translateX(-50%);}
+    &-hf {top:50%; transform: translateY(-50%);}
+}
+
+/* z-index */
+@for $zi from 0 to 100 {
+    .z-#{$zi} {
+        z-index : 1 * $zi
+    }
+}
+
+/* position */
+@for $ps from 0 to 100 {
+    .ps {
+        &-t#{$ps} {top:#{$ps}px;}
+        &-b#{$ps} {bottom:#{$ps}px;}
+        &-l#{$ps} {left:#{$ps}px;}
+        &-r#{$ps} {right:#{$ps}px;}
+    }
+    .ps {
+        &-t#{$ps}-p {top:1% * $ps;}
+        &-b#{$ps}-p {bottom:1% * $ps;}
+        &-l#{$ps}-p {left:1% * $ps;}
+        &-r#{$ps}-p {right:1% * $ps;}
+    }
+}
+
+/* display */
+.ds {
+    &-b {display:block;}
+    &-ib {display:inline-block;}
+    &-i {display:inline;}
+
+}
+
+/* line-height */
+@for $lh from 1 to 100 {
+    .lh#{$lh} {line-height:1px * $lh !important}
+}
+
+
+@for $br from 1 to 100 {
+    .br#{$br} {border-radius:1px * $br !important}
+}
+
+.box-ns {box-shadow:none;}
+
+/* float */
+.ft {
+    &-c:after {content:""; display:block; float:none; clear:both;}
+    &-l {float:left;}
+    &-r {float:right;}
+
+}
+
+/* max-width */
+@for $mw from 1 to 100 {
+    .mw {
+        max-width:auto;
+        width:100%;
+        &-#{$mw} {max-width:1px * $mw;}
+    }
+    .nw {
+        &-#{$mw} {min-width:1px * $mw !important;}
+    }
+    .mh {
+        max-height:auto;
+        height:100%;
+        &-#{$mw} {max-height:1px * $mw;}
+    }
+    .nh {
+        &-#{$mw} {min-height:1px * $mw !important;}
+    }
+    .v-btn.mw {
+        max-width:auto;
+        width:100%;
+        &-#{$mw} {max-width:1px * $mw !important;}
+    }
+}
+
+/* margin - true */
+@for $mg from 0 to 100 {
+    .m {
+        &g#{$mg} {margin:1px * $mg !important;}
+        &t#{$mg} {margin-top:1px * $mg !important}
+        &b#{$mg} {margin-bottom:1px * $mg !important}
+        &l#{$mg} {margin-left:1px * $mg !important}
+        &r#{$mg} {margin-right:1px * $mg !important}
+    }
+}
+
+/* padding - true */
+@for $pd from 0 to 100 {
+    .p {
+        &d#{$pd} {padding:1px * $pd !important}
+        &t#{$pd} {padding-top:1px * $pd !important}
+        &b#{$pd} {padding-bottom:1px * $pd !important}
+        &l#{$pd} {padding-left:1px * $pd !important}
+        &r#{$pd} {padding-right:1px * $pd !important}
+    }
+    .ios-p {
+        &b#{$pd} {padding-bottom:calc(constant(safe-area-inset-bottom) + #{$pd}px) !important}
+        &b#{$pd} {padding-bottom:calc(env(safe-area-inset-bottom) + #{$pd}px) !important}
+        &d#{$pd} {padding:#{$pd}px #{$pd}px calc(constant(safe-area-inset-bottom) + #{$pd}px)  !important}
+        &d#{$pd} {padding:#{$pd}px #{$pd}px calc(env(safe-area-inset-bottom) + #{$pd}px)  !important}
+    }
+}
+
+@for $mgp from 1 to 100 {
+    .m {
+        &t-p#{$mgp} {margin-top:1% * $mgp !important}
+        &b-p#{$mgp} {margin-bottom:1% * $mgp !important}
+        &l-p#{$mgp} {margin-left:1% * $mgp !important}
+        &r-p#{$mgp} {margin-right:1% * $mgp !important}
+        &g-p#{$mgp} {margin:1% * $mgp !important}
+    }
+}
+/* padding - percent */
+@for $pdp from 1 to 100 {
+    .p {
+        &t-p#{$pdp} {padding-top:1% * $pdp !important}
+        &b-p#{$pdp} {padding-bottom:1% * $pdp !important}
+        &l-p#{$pdp} {padding-left:1% * $pdp !important}
+        &r-p#{$pdp} {padding-right:1% * $pdp !important}
+        &d-p#{$pdp} {padding:1% * $pdp !important}
+    }
+}
+/* screen mobile */
+@media (max-width:750px) {
+    /* margin - percent */
+    @for $mbmgp from 1 to 100 {
+        .mb-m {
+            &t-p#{$mbmgp} {margin-top:1% * $mbmgp !important}
+            &b-p#{$mbmgp} {margin-bottom:1% * $mbmgp !important}
+            &l-p#{$mbmgp} {margin-left:1% * $mbmgp !important}
+            &r-p#{$mbmgp} {margin-right:1% * $mbmgp !important}
+            &g-p#{$mbmgp} {margin:1% * $mbmgp !important}
+        }
+    }
+    /* padding - percent */
+    @for $mbpdp from 1 to 100 {
+        .mb-p {
+            &t-p#{$mbpdp} {padding-top:1% * $mbpdp !important}
+            &b-p#{$mbpdp} {padding-bottom:1% * $mbpdp !important}
+            &l-p#{$mbpdp} {padding-left:1% * $mbpdp !important}
+            &r-p#{$mbpdp} {padding-right:1% * $mbpdp !important}
+            &d-p#{$mbpdp} {padding:1% * $mbpdp !important}
+        }
+    }
+}
+
+/* font */
+@for $ft from 0 to 100 {
+    .ft {
+        &s#{$ft} {font-size:1px * $ft !important}
+        &w#{$ft} {font-weight:100 * $ft !important}
+    }
+}
+
+/*캔버스 스타일*/
+svg {display:inline-block; vertical-align:middle;}
